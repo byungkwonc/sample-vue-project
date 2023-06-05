@@ -1,23 +1,21 @@
-<template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
-  </div>
-</template>
+<script setup>
+import { ref, onMounted } from 'vue'
+import { supabase } from './lib/supabaseClient'
 
-<script>
-export default {
-  name: 'App'
+const countries = ref([])
+
+async function getCountries() {
+  const { data } = await supabase.from('countries').select()
+  countries.value = data
 }
+
+onMounted(() => {
+  getCountries()
+})
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
+<template>
+  <ul>
+    <li v-for="country in countries" :key="country.id">{{ country.name }}</li>
+  </ul>
+</template>
